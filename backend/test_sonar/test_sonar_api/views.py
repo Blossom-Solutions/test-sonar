@@ -26,6 +26,18 @@ class PostApiView(GenericAPIView):
     
     permission_classes = [permissions.IsAuthenticated] # auth views
 
+    def update_activity(self, post, user, interaction_type):
+        '''
+        Update the activity of the post
+        '''
+        if interaction_type == 1:
+            post.likes += 1
+        else:
+            post.views += 1
+        post.save()
+        ActivityLog.objects.create(interaction_type=interaction_type, post=post, user=user)
+        return post
+
     def get(self, request, *args, **kwargs):
         '''
         List all the posts or by id
@@ -33,7 +45,7 @@ class PostApiView(GenericAPIView):
         if request.query_params:    
             posts = Post.objects.filter(**request.query_params.dict())
         else:
-            posts = Post.objects.all()
+            posts = Post.objects.order_by('-likes','-views')
         if posts:
             serializer = PostSerializer(posts, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -56,6 +68,18 @@ class PostApiView(GenericAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, *args, **kwargs):
+        '''
+        Update the activity of the post
+        '''
+        post = Post.objects.filter(id=request.data.get('id')).first()
+        if post:
+            post = self.update_activity(post, request.user, request.data.get('interaction_type'))
+            serializer = PostSerializer(post)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 class ActivityLogCreateView(GenericAPIView):
     permission_classes = [permissions.IsAuthenticated] # auth views

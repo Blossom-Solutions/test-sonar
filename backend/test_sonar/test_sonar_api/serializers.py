@@ -28,7 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ["image_src", "title", "description", "user"]
+        fields = ('id', 'image_src', 'title', 'description', 'user', 'likes', 'views')
 
 class ActivityLogSerializer(serializers.ModelSerializer):
     class Meta:
