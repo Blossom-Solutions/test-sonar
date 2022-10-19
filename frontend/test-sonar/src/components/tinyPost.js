@@ -1,4 +1,6 @@
 import React from 'react';
+import TYPES from './enums';
+import { Navigate } from "react-router-dom";
 
 export default function TinyPost({ post }) {
     const getToken = () => {
@@ -6,14 +8,15 @@ export default function TinyPost({ post }) {
         return tokenData?.access
       };
     const token = getToken()
+    const [navigate, setNavigate] = React.useState(false);
 
     const handleClick = async () => {
         try {
-            const response = await fetch('http://localhost:8000/test/api/logs/', {
-                method: 'POST',
+            const response = await fetch('http://localhost:8000/test/api/posts/', {
+                method: 'PATCH',
                 body: JSON.stringify({
-                    interaction_type: 1,
-                    post: post.id,
+                    interaction_type: TYPES.LIKE,
+                    id: post.id,
                 }),
                 headers: {
                     'Authorization': 'Bearer '+ token,
@@ -31,13 +34,14 @@ export default function TinyPost({ post }) {
         }
     }
     return (
-        <div className='row justify-content-center align-items-center mb-3'>
-            <div className='card bg-dark col-6'>
-                <img className='card-img-top' style={{ 'height': '300px' }} src='https://picsum.photos/400/500' />
+        <div className='row my-2 justify-content-center align-items-center mb-3'>
+            <div className='card bg-dark col-8 px-0'>
+                <img className='card-img-top ' alt="test" src='https://picsum.photos/700/350' />
                 <div className="card-body">
-                    <h5 className="card-title">{post.title}</h5>
+                    <h5 className="text-white card-title">{post.title}</h5>
                     <a onClick={handleClick} className="btn btn-primary">Like</a>
-                    <a className="btn btn-secondary ms-2">See Full Post</a>
+                    <a onClick={()=>setNavigate(true)} className="mx-2 btn btn-primary">See Full Post </a>
+                    {navigate && <Navigate to="/post" state={{post, token}} />}
                 </div>
             </div>
         </div>

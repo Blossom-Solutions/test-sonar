@@ -5,6 +5,7 @@ import Home from './components/home'
 import Login from './components/login';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import useToken from './components/useToken';
+import Navbar from './components/navbar';
 
 
 function App() {
@@ -14,8 +15,8 @@ function App() {
   }
 
   return (
-    <div className="container">
-      <h1>Application</h1>
+    <div>
+      <Navbar />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />}/>
