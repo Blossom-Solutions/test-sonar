@@ -23,8 +23,6 @@ class Post(models.Model):
     )
     likes = models.IntegerField(default = 0)
     views = models.IntegerField(default = 0)
-    def __str__(self):
-        return self.title
 
 class ActivityLog(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
